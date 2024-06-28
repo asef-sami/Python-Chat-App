@@ -116,7 +116,7 @@ class ClientGUI:
             print(f"Error receiving file: {e}")
 
     def send_message(self):
-        # Function for sending text messages to the server
+        # Function for sending text messages to the Server
         try:
             message = self.entry.get()
             if message:
@@ -134,3 +134,5 @@ if __name__ == "__main__":
         client_gui.root.mainloop()
     except Exception as e:
         print(f"Error starting client GUI: {e}")
+
+
