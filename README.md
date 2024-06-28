@@ -74,3 +74,7 @@ This project was inspired by the need for a simple, reliable client-server messa
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+
+- Asef Sami Chowdhury
