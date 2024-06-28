@@ -72,9 +72,6 @@ This project implements a simple client-server application for messaging and fil
 
 This project was inspired by the need for a simple, reliable client-server messaging and file transfer system for educational purposes.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Author
 
