@@ -1,5 +1,6 @@
 # Python-Chat-App
 CSE 3101 Computer Networking course Project
+
 # File Transfer and Messaging Application
 
 ## Overview
@@ -23,12 +24,12 @@ This project implements a simple client-server application for messaging and fil
 
 1. Clone the repository to your local machine:
     ```sh
-    git clone <https://github.com/asef-sami/Python-Chat-App.git>
+    git clone https://github.com/asef-sami/Python-Chat-App.git
     ```
 
 2. Navigate to the project directory:
     ```sh
-    cd <Python-Chat-App>
+    cd Python-Chat-App
     ```
 
 ## Usage
