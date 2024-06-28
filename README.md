@@ -37,7 +37,7 @@ This project implements a simple client-server application for messaging and fil
 
 1. Start the server by running the `server.py` file:
     ```sh
-    python server.py
+    python3 server.py
     ```
 
 2. The server GUI will open, allowing you to see messages from clients and send messages or files.
@@ -46,7 +46,7 @@ This project implements a simple client-server application for messaging and fil
 
 1. Start a client by running the `client.py` file:
     ```sh
-    python client.py
+    python3 client.py
     ```
 
 2. Enter your name when prompted, and the client GUI will open.
