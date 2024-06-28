@@ -1,0 +1,154 @@
+server:
+import socket
+import json
+import random
+
+account_balance = 100000.00
+
+def handle_card_verification(data):
+    if data['card_number'] == '123456789' and data['password'] == '3386':
+        return {'status': 'success', 'balance': account_balance}
+    else:
+        return {'status': 'failure'}
+
+def handle_balance_query(data):
+    return {'balance': account_balance}
+
+def handle_withdrawal_request(data):
+    global account_balance
+
+    withdrawal_amount = data['withdrawal_amount']
+
+    # Introduce a 30% chance of random error during withdrawal
+    if random.random() < 0.3:
+        return {'status': 'failure', 'error_message': 'Random error during withdrawal'}
+    
+    if withdrawal_amount <= account_balance:
+        account_balance -= withdrawal_amount
+        return {'status': 'success', 'new_balance': account_balance}
+    else:
+        return {'status': 'failure', 'message': 'Insufficient funds'}
+
+def handle_deposit_request(data):
+    global account_balance
+
+    deposit_amount = data['deposit_amount']
+
+    # Introduce a 30% chance of random error during deposit
+    if random.random() < 0.3:
+        return {'status': 'failure', 'error_message': 'Random error during deposit'}
+
+    account_balance += deposit_amount
+    return {'status': 'success', 'new_balance': account_balance}
+
+def main():
+    server_ip = '127.0.0.1'
+    server_port = 3386
+
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((server_ip, server_port))
+    server_socket.listen(15)
+
+    print("Bank Server is ready")
+
+    while True:
+        connection_socket, addr = server_socket.accept()
+        data = connection_socket.recv(1024).decode()
+        data = json.loads(data)
+
+        if data['message_type'] == 'CardVerificationRequest':
+            response_data = handle_card_verification(data)
+        elif data['message_type'] == 'BalanceQueryRequest':
+            response_data = handle_balance_query(data)
+        elif data['message_type'] == 'WithdrawalRequest':
+            response_data = handle_withdrawal_request(data)
+        elif data['message_type'] == 'DepositRequest':
+            response_data = handle_deposit_request(data)
+        else:
+            response_data = {'status': 'failure', 'message': 'Invalid request'}
+
+        connection_socket.send(json.dumps(response_data).encode())
+        connection_socket.close()
+
+if __name__ == "__main__":
+    main()
+
+Client:
+import socket
+import json
+
+def send_request(message_type, data):
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_ip = '127.0.0.1'
+    server_port = 3386
+
+    try:
+        client_socket.connect((server_ip, server_port))
+        request_data = {'message_type': message_type, **data}
+        client_socket.send(json.dumps(request_data).encode())
+        response_data = client_socket.recv(1024).decode()
+        response_data = json.loads(response_data)
+        return response_data
+    finally:
+        client_socket.close()
+
+
+def main():
+    card_number = input("Enter your card number: ")
+    password = input("Enter your PIN: ")
+
+    card_verification_request = {'card_number': card_number, 'password': password}
+    card_verification_response = send_request('CardVerificationRequest', card_verification_request)
+
+    if card_verification_response['status'] == 'success':
+        print(f"Card verification successful.")
+
+        while True:
+            print("\nOptions:")
+            print("1. Check Account Balance")
+            print("2. Make a Withdrawal")
+            print("3. Make a Deposit")
+            print("4. Exit")
+
+            choice = input("Enter your choice (1-4): ")
+
+            if choice == '1':
+                balance_query_request = {'card_number': card_number}
+                balance_query_response = send_request('BalanceQueryRequest', balance_query_request)
+                print(f"Account balance: ${balance_query_response['balance']:.2f}")
+
+            elif choice == '2':
+                withdrawal_amount = float(input("Enter withdrawal amount: $"))
+                withdrawal_request = {'card_number': card_number, 'withdrawal_amount': withdrawal_amount}
+                withdrawal_response = send_request('WithdrawalRequest', withdrawal_request)
+
+                if withdrawal_response['status'] == 'success':
+                    print(f"Withdrawal successful. New balance: ${withdrawal_response['new_balance']:.2f}")
+                else:
+                    print(f"Withdrawal failed: {withdrawal_response.get('error_message', withdrawal_response['message'])}")
+
+            elif choice == '3':
+                deposit_amount = float(input("Enter deposit amount: $"))
+                deposit_request = {'card_number': card_number, 'deposit_amount': deposit_amount}
+                deposit_response = send_request('DepositRequest', deposit_request)
+
+                if deposit_response['status'] == 'success':
+                    print(f"Deposit successful. New balance: ${deposit_response['new_balance']:.2f}")
+                else:
+                    print(f"Deposit failed: {deposit_response.get('error_message', deposit_response['message'])}")
+
+            elif choice == '4':
+                print("Exiting the system.")
+                break
+
+            else:
+                print("Invalid choice. Please enter a number between 1 and 4.")
+
+    else:
+        print("Card verification failed. Please check your card and PIN.")
+
+if __name__ == "__main__":
+    main()
+set a timer how much time needed to get random erorr for from 10%-50%, give me a chart where x is error persentage (10%-50%) and y is time  
+
+Enhance the above protocol so that it can handle errors related to both request and response messages to and from the server.For that create some random number 30% time that if it matches the number error will generate to withdraw or deposit amount and if not no error.  
